@@ -1,0 +1,77 @@
+name: pdf2image
+description: 将 PDF 转换为 JPG 图片
+
+spec:
+  schema:
+    type: OpenAPI
+    detail: 
+      openapi: 3.0.1
+      info:
+        title: PDF to Images API
+        description: An API to convert PDF to images, zip them, and return a presigned URL.
+        version: "v1"
+      servers:
+        - url: ""
+      paths:
+        /:
+          post:
+            operationId: pdf2img
+            summary: 把 PDF 转换为图片，上传到 OSS 中，并获取图片的 URL
+            parameters:
+              - name: pdf_url
+                in: query
+                required: true
+                schema:
+                  type: string
+                  format: uri
+                description: 需要处理的 PDF 文件的 URL
+                example: https://example.com/document.pdf
+              - name: dpi
+                in: query
+                required: false
+                schema:
+                  type: integer
+                  default: 200
+                description: 图像转换的 DPI 设置
+
+            responses:
+              '200':
+                description: 成功处理 PDF
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          enum: [Success]
+                        message:
+                          type: string
+                        presigned_url:
+                          type: string
+                          format: uri
+                          description: 处理后 ZIP 文件的预签名 URL
+              '400':
+                description: 请求错误
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          enum: [Error]
+                        message:
+                          type: string
+              '500':
+                description: 服务器内部错误
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          enum: [Error]
+                        message:
+                          type: string
